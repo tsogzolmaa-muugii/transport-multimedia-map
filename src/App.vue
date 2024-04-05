@@ -1,4 +1,6 @@
 <template>
+  <div class="btn btn-primary btn-large">Click me</div>
+
   <form>
     <label for="zoom">Zoom:</label>
     <input type="number" id="zoom" v-model="zoom" />
