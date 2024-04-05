@@ -40,6 +40,15 @@
         </ol-source-vector>
       </ol-vector-layer>
 
+      <ol-vector-layer
+        ref="tram46StationsPassengerNumberLayer"
+        title="Tram 46 stations' passenger numbers"
+      >
+        <ol-source-vector :url="tram_4_6_stations_passenger_number_url" :format="geoJson">
+          <ol-style :overrideStyleFunction="tram46StationsPassengersNumberStyleFn"></ol-style>
+        </ol-source-vector>
+      </ol-vector-layer>
+
       <ol-rotate-control></ol-rotate-control>
       <ol-interaction-link />
       <ol-layerswitcher-control v-if="layerList.length > 0" />
@@ -69,6 +78,9 @@ const geoJson = new format.GeoJSON()
 const bus_5_line_url = ref('../data/bus_5_line.geojson')
 const tram_4_6_line_url = ref('../data/tram_4_6_line.geojson')
 const tram_4_6_points_url = ref('../data/tram_4_6_points.geojson')
+const tram_4_6_stations_passenger_number_url = ref(
+  '../data/tram_4_6_stations_passenger_number.geojson'
+)
 
 function tram46PointsStyleFn(feature) {
   return new Style({
@@ -78,6 +90,26 @@ function tram46PointsStyleFn(feature) {
       stroke: new Stroke({
         color: '#00000',
         width: 1
+      })
+    }),
+    text: new Text({
+      text: feature.get('name') + '',
+      textAlign: 'left',
+      offsetX: 13,
+      font: '12px sans-serif',
+      stroke: new Stroke({ width: 4, color: 'white' })
+    })
+  })
+}
+
+function tram46StationsPassengersNumberStyleFn(feature) {
+  return new Style({
+    image: new Circle({
+      radius: feature.get('average') / 100,
+      // fill: new Fill({ color: 'blue' }),
+      stroke: new Stroke({
+        color: 'blue',
+        width: 2
       })
     }),
     text: new Text({
