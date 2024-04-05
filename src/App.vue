@@ -31,8 +31,14 @@
       </ol-tile-layer>
 
       <ol-vector-layer ref="vectorSourceRef">
-        <ol-source-vector :url="url" :format="geoJson">
-          <ol-style :overrideStyleFunction="styleFn"></ol-style>
+        <ol-source-vector :url="bus_5_line_url" :format="geoJson">
+          <ol-style :overrideStyleFunction="bus5LineStyleFn"></ol-style>
+        </ol-source-vector>
+      </ol-vector-layer>
+
+      <ol-vector-layer ref="vectorSourceRef">
+        <ol-source-vector :url="tram_4_6_line_url" :format="geoJson">
+          <ol-style :overrideStyleFunction="tram46LineStyleFn"></ol-style>
         </ol-source-vector>
       </ol-vector-layer>
 
@@ -84,9 +90,19 @@ const projectionName = 'EPSG:4326'
 const format = inject('ol-format')
 const geoJson = new format.GeoJSON()
 
-const url = ref('../data/line.geojson')
+const bus_5_line_url = ref('../data/bus_5_line.geojson')
+const tram_4_6_line_url = ref('../data/tram_4_6_line.geojson')
 
-function styleFn(feature) {
+function bus5LineStyleFn(feature) {
+  return new Style({
+    stroke: new Stroke({
+      color: '#1861d6',
+      width: 3
+    })
+  })
+}
+
+function tram46LineStyleFn(feature) {
   return new Style({
     stroke: new Stroke({
       color: '#f09e24',
