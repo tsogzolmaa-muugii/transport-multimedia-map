@@ -7,11 +7,13 @@
     </form>
 
     <ol-map style="height: 400px">
-      <ol-projection-register
+      <!--
+        Geojson data niihaa projectoiniig taaruulah heregtei. Taaruulaagui baigaa bolohoor tseg bolj haragdaad baina.
+        <ol-projection-register
         :projectionName="projectionName"
         :projectionDef="projectionDef"
         :projectionExtent="projectionExtent"
-      />
+      /> -->
 
       <ol-view
         ref="view"
@@ -19,7 +21,6 @@
         :rotation="rotation"
         :zoom="zoom"
         :projection="projectionName"
-        :extend="projectionExtent"
         @change:center="centerChanged"
         @change:resolution="resolutionChanged"
         @change:rotation="rotationChanged"
@@ -28,6 +29,12 @@
       <ol-tile-layer>
         <ol-source-osm />
       </ol-tile-layer>
+
+      <ol-vector-layer ref="vectorSourceRef">
+        <ol-source-vector :url="url" :format="geoJson">
+          <ol-style :overrideStyleFunction="styleFn"></ol-style>
+        </ol-source-vector>
+      </ol-vector-layer>
 
       <ol-rotate-control></ol-rotate-control>
       <ol-interaction-link />
@@ -43,10 +50,11 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, inject } from 'vue'
 import Navigation from './components/Navigation.vue'
+import { Fill, Style, Stroke } from 'ol/style'
 
-const center = ref([650617.4, 238970.6]) // Budapest
+const center = ref([19.048293905125572, 47.493834801228868]) // Budapest
 const zoom = ref(14)
 const rotation = ref(0)
 
@@ -66,10 +74,26 @@ function rotationChanged(event) {
   currentRotation.value = event.target.getRotation()
 }
 
-const projectionName = 'EPSG:27300'
-const projectionDef =
-  '+proj=somerc +lat_0=47.1443937222222 +lon_0=19.0485717777778 +k_0=0.99993 +x_0=650000 +y_0=200000 +ellps=GRS67 +units=m +no_defs'
-const projectionExtent = [16.11, 45.74, 22.9, 48.58]
+const projectionName = 'EPSG:4326'
+
+// Geojson data niihaa projectoiniig taaruulah heregtei. Taaruulaagui baigaa bolohoor tseg bolj haragdaad baina.
+// const projectionDef =
+//   '+proj=somerc +lat_0=47.1443937222222 +lon_0=19.0485717777778 +k_0=0.99993 +x_0=650000 +y_0=200000 +ellps=GRS67 +units=m +no_defs'
+// const projectionExtent = [16.11, 45.74, 22.9, 48.58]
+
+const format = inject('ol-format')
+const geoJson = new format.GeoJSON()
+
+const url = ref('../data/line.geojson')
+
+function styleFn(feature) {
+  return new Style({
+    stroke: new Stroke({
+      color: '#f09e24',
+      width: 3
+    })
+  })
+}
 </script>
 
 <style scoped>
