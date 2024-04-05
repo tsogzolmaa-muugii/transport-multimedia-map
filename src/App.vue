@@ -7,12 +7,19 @@
     </form>
 
     <ol-map style="height: 400px">
+      <ol-projection-register
+        :projectionName="projectionName"
+        :projectionDef="projectionDef"
+        :projectionExtent="projectionExtent"
+      />
+
       <ol-view
         ref="view"
         :center="center"
         :rotation="rotation"
         :zoom="zoom"
-        :projection="projection"
+        :projection="projectionName"
+        :extend="projectionExtent"
         @change:center="centerChanged"
         @change:resolution="resolutionChanged"
         @change:rotation="rotationChanged"
@@ -39,9 +46,8 @@
 import { ref } from 'vue'
 import Navigation from './components/Navigation.vue'
 
-const center = ref([19.1, 47.5]) // Budapest
-const projection = ref('EPSG:4326')
-const zoom = ref(12)
+const center = ref([650617.4, 238970.6]) // Budapest
+const zoom = ref(14)
 const rotation = ref(0)
 
 const currentCenter = ref(center.value)
@@ -59,6 +65,11 @@ function centerChanged(event) {
 function rotationChanged(event) {
   currentRotation.value = event.target.getRotation()
 }
+
+const projectionName = 'EPSG:27300'
+const projectionDef =
+  '+proj=somerc +lat_0=47.1443937222222 +lon_0=19.0485717777778 +k_0=0.99993 +x_0=650000 +y_0=200000 +ellps=GRS67 +units=m +no_defs'
+const projectionExtent = [16.11, 45.74, 22.9, 48.58]
 </script>
 
 <style scoped>
