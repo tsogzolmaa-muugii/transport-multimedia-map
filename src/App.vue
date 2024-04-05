@@ -67,6 +67,8 @@
         :displayInLayerSwitcher="checkingSomething"
       />
     </ol-map>
+
+    <input type="time" @change="updatePassengerNumbersByTime" />
   </div>
 </template>
 
@@ -76,23 +78,27 @@ import Navigation from './components/Navigation.vue'
 import { Fill, Style, Stroke, Circle, Text } from 'ol/style'
 import { tram46_stations_passenger_number } from './data/tram_4_6_stations_passenger_number.js'
 
-const givenTime = '6:15'
-
-const passengerNumberDataList = tram46_stations_passenger_number.features
-  .map((d, idx) => {
-    if (d.geometry) {
-      const coordinates = d.geometry.coordinates
-      const numPassengers = d.properties[givenTime]
-      if (numPassengers != null) {
-        return {
-          coordinates: coordinates,
-          numPassengers: numPassengers,
-          idx: idx
+function updatePassengerNumbersByTime(e) {
+  const givenTime = e.target.value
+  const newDataList = tram46_stations_passenger_number.features
+    .map((d, idx) => {
+      if (d.geometry) {
+        const coordinates = d.geometry.coordinates
+        const numPassengers = d.properties[givenTime]
+        if (numPassengers != null) {
+          return {
+            coordinates: coordinates,
+            numPassengers: numPassengers,
+            idx: idx
+          }
         }
       }
-    }
-  })
-  .filter((d) => d)
+    })
+    .filter((d) => d)
+  passengerNumberDataList.value = newDataList
+}
+
+const passengerNumberDataList = ref([])
 
 const center = ref([19.048293905125572, 47.493834801228868]) // Budapest
 const zoom = ref(14)
@@ -139,44 +145,6 @@ function tram46PointsStyleFn(feature) {
   })
 }
 
-function tram46StationsPassengersNumberStyleFn(feature) {
-  return new Style({
-    image: new Circle({
-      radius: feature.get('average') / 100,
-      // fill: new Fill({ color: 'blue' }),
-      stroke: new Stroke({
-        color: 'blue',
-        width: 2
-      })
-    }),
-    text: new Text({
-      text: feature.get('name') + '',
-      textAlign: 'left',
-      offsetX: 13,
-      font: '12px sans-serif',
-      stroke: new Stroke({ width: 4, color: 'white' })
-    })
-  })
-}
-
-// var pomStyle=(f,r)=>new ol.style.Style({
-//     image: new ol.style.Circle({
-//         radius: 4,
-//         fill: new ol.style.Fill({ color: 'red' }),
-//         stroke: new ol.style.Stroke({
-//             width: 1,
-//             color: 'black'
-//         })
-//     }),
-//     text: new ol.style.Text({
-//         text: f.get('name')+'',
-//         textAlign: 'left',
-//         offsetX: 13,
-//         font: '12px sans-serif',
-//         stroke: new ol.style.Stroke({ width: 4, color: 'white' })
-//     })
-// });
-
 function bus5LineStyleFn(feature) {
   return new Style({
     stroke: new Stroke({
@@ -208,7 +176,9 @@ onMounted(() => {
   layerList.value.push(bus5LineLayer.value.tileLayer)
   layerList.value.push(tram46LineLayer.value.tileLayer)
   layerList.value.push(tram46PointsLayer.value.tileLayer)
-  layerList.value.push(PassengerNumberCircle.value.tileLayer)
+  if (PassengerNumberCircle.value) {
+    layerList.value.push(PassengerNumberCircle.value.tileLayer)
+  }
 })
 </script>
 
