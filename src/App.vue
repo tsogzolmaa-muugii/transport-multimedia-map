@@ -1,11 +1,6 @@
 <template>
   <Navigation />
   <div class="container">
-    <form>
-      <label for="zoom">Zoom:</label>
-      <input type="number" id="zoom" v-model="zoom" />
-    </form>
-
     <ol-map style="height: 400px">
       <!--
         Geojson data niihaa projectoiniig taaruulah heregtei. Taaruulaagui baigaa bolohoor tseg bolj haragdaad baina.
@@ -21,9 +16,6 @@
         :rotation="rotation"
         :zoom="zoom"
         :projection="projectionName"
-        @change:center="centerChanged"
-        @change:resolution="resolutionChanged"
-        @change:rotation="rotationChanged"
       />
 
       <ol-tile-layer ref="OpenStreetMapLayer" title="Map">
@@ -52,13 +44,6 @@
       <ol-interaction-link />
       <ol-layerswitcher-control v-if="layerList.length > 0" />
     </ol-map>
-
-    <ul>
-      <li>center : {{ currentCenter }}</li>
-      <li>resolution : {{ currentResolution }}</li>
-      <li>zoom : {{ currentZoom }}</li>
-      <li>rotation : {{ currentRotation }}</li>
-    </ul>
   </div>
 </template>
 
@@ -70,22 +55,6 @@ import { Fill, Style, Stroke, Circle, Text } from 'ol/style'
 const center = ref([19.048293905125572, 47.493834801228868]) // Budapest
 const zoom = ref(14)
 const rotation = ref(0)
-
-const currentCenter = ref(center.value)
-const currentZoom = ref(zoom.value)
-const currentRotation = ref(rotation.value)
-const currentResolution = ref(0)
-
-function resolutionChanged(event) {
-  currentResolution.value = event.target.getResolution()
-  currentZoom.value = event.target.getZoom()
-}
-function centerChanged(event) {
-  currentCenter.value = event.target.getCenter()
-}
-function rotationChanged(event) {
-  currentRotation.value = event.target.getRotation()
-}
 
 const projectionName = 'EPSG:4326'
 
