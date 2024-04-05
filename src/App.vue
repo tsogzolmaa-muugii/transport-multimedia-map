@@ -1,45 +1,45 @@
 <template>
-  <div class="btn btn-primary btn-large">Click me</div>
+  <div class="container">
+    <form>
+      <label for="zoom">Zoom:</label>
+      <input type="number" id="zoom" v-model="zoom" />
+    </form>
 
-  <form>
-    <label for="zoom">Zoom:</label>
-    <input type="number" id="zoom" v-model="zoom" />
-  </form>
+    <ol-map style="height: 400px">
+      <ol-view
+        ref="view"
+        :center="center"
+        :rotation="rotation"
+        :zoom="zoom"
+        :projection="projection"
+        @change:center="centerChanged"
+        @change:resolution="resolutionChanged"
+        @change:rotation="rotationChanged"
+      />
 
-  <ol-map style="height: 400px">
-    <ol-view
-      ref="view"
-      :center="center"
-      :rotation="rotation"
-      :zoom="zoom"
-      :projection="projection"
-      @change:center="centerChanged"
-      @change:resolution="resolutionChanged"
-      @change:rotation="rotationChanged"
-    />
+      <ol-tile-layer>
+        <ol-source-osm />
+      </ol-tile-layer>
 
-    <ol-tile-layer>
-      <ol-source-osm />
-    </ol-tile-layer>
+      <ol-rotate-control></ol-rotate-control>
+      <ol-interaction-link />
+    </ol-map>
 
-    <ol-rotate-control></ol-rotate-control>
-    <ol-interaction-link />
-  </ol-map>
-
-  <ul>
-    <li>center : {{ currentCenter }}</li>
-    <li>resolution : {{ currentResolution }}</li>
-    <li>zoom : {{ currentZoom }}</li>
-    <li>rotation : {{ currentRotation }}</li>
-  </ul>
+    <ul>
+      <li>center : {{ currentCenter }}</li>
+      <li>resolution : {{ currentResolution }}</li>
+      <li>zoom : {{ currentZoom }}</li>
+      <li>rotation : {{ currentRotation }}</li>
+    </ul>
+  </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 
-const center = ref([40, 40])
+const center = ref([19.1, 47.5]) // Budapest
 const projection = ref('EPSG:4326')
-const zoom = ref(8)
+const zoom = ref(12)
 const rotation = ref(0)
 
 const currentCenter = ref(center.value)
