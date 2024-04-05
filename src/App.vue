@@ -26,23 +26,23 @@
         @change:rotation="rotationChanged"
       />
 
-      <ol-tile-layer>
+      <ol-tile-layer ref="OpenStreetMapLayer" title="Map">
         <ol-source-osm />
       </ol-tile-layer>
 
-      <ol-vector-layer ref="vectorSourceRef">
+      <ol-vector-layer ref="bus5LineLayer" title="Bus 5 line">
         <ol-source-vector :url="bus_5_line_url" :format="geoJson">
           <ol-style :overrideStyleFunction="bus5LineStyleFn"></ol-style>
         </ol-source-vector>
       </ol-vector-layer>
 
-      <ol-vector-layer ref="vectorSourceRef">
+      <ol-vector-layer ref="tram46LineLayer" title="Tram 46 line">
         <ol-source-vector :url="tram_4_6_line_url" :format="geoJson">
           <ol-style :overrideStyleFunction="tram46LineStyleFn"></ol-style>
         </ol-source-vector>
       </ol-vector-layer>
 
-      <ol-vector-layer ref="vectorSourceRef">
+      <ol-vector-layer ref="tram46PointsLayer" title="Tram 46 stations">
         <ol-source-vector :url="tram_4_6_points_url" :format="geoJson">
           <ol-style :overrideStyleFunction="tram46PointsStyleFn"></ol-style>
         </ol-source-vector>
@@ -50,6 +50,7 @@
 
       <ol-rotate-control></ol-rotate-control>
       <ol-interaction-link />
+      <ol-layerswitcher-control v-if="layerList.length > 0" />
     </ol-map>
 
     <ul>
@@ -62,7 +63,7 @@
 </template>
 
 <script setup>
-import { ref, inject } from 'vue'
+import { ref, inject, onMounted } from 'vue'
 import Navigation from './components/Navigation.vue'
 import { Fill, Style, Stroke, Circle, Text } from 'ol/style'
 
@@ -155,6 +156,20 @@ function tram46LineStyleFn(feature) {
     })
   })
 }
+
+const layerList = ref([])
+
+const OpenStreetMapLayer = ref(null)
+const bus5LineLayer = ref(null)
+const tram46LineLayer = ref(null)
+const tram46PointsLayer = ref(null)
+
+onMounted(() => {
+  layerList.value.push(OpenStreetMapLayer.value.tileLayer)
+  layerList.value.push(bus5LineLayer.value.tileLayer)
+  layerList.value.push(tram46LineLayer.value.tileLayer)
+  layerList.value.push(tram46PointsLayer.value.tileLayer)
+})
 </script>
 
 <style scoped>
