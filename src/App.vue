@@ -1,4 +1,5 @@
 <template>
+  <Navigation />
   <div class="container">
     <form>
       <label for="zoom">Zoom:</label>
@@ -36,6 +37,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import Navigation from './components/Navigation.vue'
 
 const center = ref([19.1, 47.5]) // Budapest
 const projection = ref('EPSG:4326')
