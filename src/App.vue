@@ -41,17 +41,31 @@
       </ol-vector-layer>
 
       <ol-vector-layer
-        ref="tram46StationsPassengerNumberLayer"
-        title="Tram 46 stations' passenger numbers"
+        ref="PassengerNumberCircle"
+        title="PassengerNumberCircle"
+        v-for="passengerNumberData in passengerNumberDataList"
+        :key="passengerNumberData.idx"
       >
-        <ol-source-vector :url="tram_4_6_stations_passenger_number_url" :format="geoJson">
-          <ol-style :overrideStyleFunction="tram46StationsPassengersNumberStyleFn"></ol-style>
+        <ol-source-vector>
+          <ol-feature>
+            <ol-geom-circle
+              :center="passengerNumberData.coordinates"
+              :radius="passengerNumberData.numPassengers / 200000"
+            ></ol-geom-circle>
+            <ol-style>
+              <ol-style-stroke color="blue" :width="1"></ol-style-stroke>
+              <ol-style-fill color="rgba(255,200,0,0.2)"></ol-style-fill>
+            </ol-style>
+          </ol-feature>
         </ol-source-vector>
       </ol-vector-layer>
 
       <ol-rotate-control></ol-rotate-control>
       <ol-interaction-link />
-      <ol-layerswitcher-control v-if="layerList.length > 0" />
+      <ol-layerswitcher-control
+        v-if="layerList.length > 0"
+        :displayInLayerSwitcher="checkingSomething"
+      />
     </ol-map>
   </div>
 </template>
@@ -60,6 +74,25 @@
 import { ref, inject, onMounted } from 'vue'
 import Navigation from './components/Navigation.vue'
 import { Fill, Style, Stroke, Circle, Text } from 'ol/style'
+import { tram46_stations_passenger_number } from './data/tram_4_6_stations_passenger_number.js'
+
+const givenTime = '6:15'
+
+const passengerNumberDataList = tram46_stations_passenger_number.features
+  .map((d, idx) => {
+    if (d.geometry) {
+      const coordinates = d.geometry.coordinates
+      const numPassengers = d.properties[givenTime]
+      if (numPassengers != null) {
+        return {
+          coordinates: coordinates,
+          numPassengers: numPassengers,
+          idx: idx
+        }
+      }
+    }
+  })
+  .filter((d) => d)
 
 const center = ref([19.048293905125572, 47.493834801228868]) // Budapest
 const zoom = ref(14)
@@ -78,9 +111,13 @@ const geoJson = new format.GeoJSON()
 const bus_5_line_url = ref('../data/bus_5_line.geojson')
 const tram_4_6_line_url = ref('../data/tram_4_6_line.geojson')
 const tram_4_6_points_url = ref('../data/tram_4_6_points.geojson')
-const tram_4_6_stations_passenger_number_url = ref(
-  '../data/tram_4_6_stations_passenger_number.geojson'
-)
+
+function checkingSomething(input) {
+  if (input.values_.title == 'PassengerNumberCircle') {
+    return false
+  }
+  return true
+}
 
 function tram46PointsStyleFn(feature) {
   return new Style({
@@ -164,12 +201,14 @@ const OpenStreetMapLayer = ref(null)
 const bus5LineLayer = ref(null)
 const tram46LineLayer = ref(null)
 const tram46PointsLayer = ref(null)
+const PassengerNumberCircle = ref(null)
 
 onMounted(() => {
   layerList.value.push(OpenStreetMapLayer.value.tileLayer)
   layerList.value.push(bus5LineLayer.value.tileLayer)
   layerList.value.push(tram46LineLayer.value.tileLayer)
   layerList.value.push(tram46PointsLayer.value.tileLayer)
+  layerList.value.push(PassengerNumberCircle.value.tileLayer)
 })
 </script>
 
